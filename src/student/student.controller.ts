@@ -3,12 +3,17 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Put,
 } from '@nestjs/common';
 import { StudentService } from './student.service';
+import { CreateStudentDto } from './dto/create-student.dto';
+import { UpdateStudentDto } from './dto/update-student.dto';
+import { UppercasePipe } from 'src/common/pipes/uppercase/uppercase.pipe';
 
 @Controller('student')
 export class StudentController {
@@ -20,20 +25,17 @@ export class StudentController {
   }
 
   @Get(':id')
-  getStudentid(@Param('id') id: string) {
+  getStudentid(@Param('id' ,new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE })) id: string) {
     return this.studentService.getStudentById(Number(id));
   }
 
   @Post()
-  addStudnet(@Body() data: { name: string; age: number }) {
+  addStudnet(@Body(new UppercasePipe()) data: CreateStudentDto) {
     return this.studentService.createStudent(data);
   }
 
   @Put(':id')
-  updateStudent(
-    @Param('id') id: string,
-    @Body() data: { name: string; age: number },
-  ) {
+  updateStudent(@Param('id') id: string, @Body() data: UpdateStudentDto) {
     return this.studentService.updateStudent(Number(id), data);
   }
 

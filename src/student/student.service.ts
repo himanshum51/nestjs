@@ -1,4 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { CreateStudentDto } from './dto/create-student.dto';
+import { UpdateStudentDto } from './dto/update-student.dto';
 
 @Injectable()
 export class StudentService {
@@ -27,22 +29,22 @@ export class StudentService {
     return student;
   }
 
-  createStudent(data: { name: string; age: number }) {
+  createStudent(data: CreateStudentDto) {
     const newStudent = {
       id: Date.now(),
       ...data,
     };
     this.students.push(newStudent);
-
     return newStudent;
   }
 
-  updateStudent(id: number, data: { name: string; age: number }) {
+  updateStudent(id: number, data: UpdateStudentDto) {
     const index = this.students.findIndex((s) => s.id === id);
     if (index === -1) {
       throw new NotFoundException('Student not Found');
     }
-    this.students[index] = { id, ...data };
+    const student = this.students[index];
+    this.students[index] = { id, name: student.name, age: student.age, ...data };
     return this.students[index];
   }
 
@@ -61,7 +63,7 @@ export class StudentService {
       throw new NotFoundException('Not Found');
     }
 
-    const deletedStudnet = this.students.splice(index, 1);
-    return { 'deleted studnet': deletedStudnet };
+    const deletedStudent = this.students.splice(index, 1);
+    return { deletedStudent };
   }
 }
