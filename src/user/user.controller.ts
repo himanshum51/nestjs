@@ -7,7 +7,7 @@ export class UserController {
 
   @Get()
   @HttpCode(200)
-  @Redirect('https://nestjs.com', 301)
+//   @Redirect('https://nestjs.com', 301)
   getusers() {
     console.log('adsadsadsd');
     return this.userService.getalluser();
