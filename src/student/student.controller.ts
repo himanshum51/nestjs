@@ -16,6 +16,9 @@ import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { UppercasePipe } from 'src/common/pipes/uppercase/uppercase.pipe';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
+import { RolesGuard } from 'src/guards/roles/roles.guard';
+import { Roles } from 'src/guards/roles/roles.decorator';
+import { Role } from 'src/guards/roles/roles.enums';
 
 @Controller('student')
 export class StudentController {
@@ -39,6 +42,8 @@ export class StudentController {
   }
 
   @Post()
+  @UseGuards(RolesGuard)
+  @Roles(Role.Admin)
   addStudnet(@Body(new UppercasePipe()) data: CreateStudentDto) {
     return this.studentService.createStudent(data);
   }
