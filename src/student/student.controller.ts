@@ -19,6 +19,7 @@ import { AuthGuard } from 'src/guards/auth/auth.guard';
 import { RolesGuard } from 'src/guards/roles/roles.guard';
 import { Roles } from 'src/guards/roles/roles.decorator';
 import { Role } from 'src/guards/roles/roles.enums';
+import { StudentResponseDto } from 'src/common/pipes/uppercase/student-response.dto';
 
 @Controller('student')
 export class StudentController {
@@ -27,7 +28,8 @@ export class StudentController {
   @Get()
   @UseGuards(AuthGuard)
   getAll() {
-    return this.studentService.getAllStudent();
+    const students = this.studentService.getAllStudent();
+    return students.map((s) => new StudentResponseDto(s));
   }
 
   @Get(':id')
@@ -38,19 +40,22 @@ export class StudentController {
     )
     id: string,
   ) {
-    return this.studentService.getStudentById(Number(id));
+    const student = this.studentService.getStudentById(Number(id));
+    return new StudentResponseDto(student);
   }
 
   @Post()
   @UseGuards(RolesGuard)
   @Roles(Role.Admin)
   addStudnet(@Body(new UppercasePipe()) data: CreateStudentDto) {
-    return this.studentService.createStudent(data);
+    const student = this.studentService.createStudent(data);
+    return new StudentResponseDto(student);
   }
 
   @Put(':id')
   updateStudent(@Param('id') id: string, @Body() data: UpdateStudentDto) {
-    return this.studentService.updateStudent(Number(id), data);
+    const student = this.studentService.updateStudent(Number(id), data);
+    return new StudentResponseDto(student);
   }
 
   @Patch(':id')
@@ -58,12 +63,16 @@ export class StudentController {
     @Param('id') id: string,
     @Body() data: Partial<{ name: string; age: number }>,
   ) {
-    return this.studentService.partialUpdateStudent(Number(id), data);
+    const student = this.studentService.partialUpdateStudent(Number(id), data);
+    return new StudentResponseDto(student);
   }
 
   @Delete(':id')
   deleteStundet(@Param('id') id: string) {
-    console.log('delete');
-    return this.studentService.deleteStudent(Number(id));
+    const result = this.studentService.deleteStudent(Number(id));
+    return {
+      message: 'Student deleted successfully',
+      student: new StudentResponseDto(result.deletedStudent[0]),
+    };
   }
 }
