@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Put,
+  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 import { StudentService } from './student.service';
@@ -20,6 +21,7 @@ import { RolesGuard } from 'src/guards/roles/roles.guard';
 import { Roles } from 'src/guards/roles/roles.decorator';
 import { Role } from 'src/guards/roles/roles.enums';
 import { StudentResponseDto } from 'src/common/pipes/uppercase/student-response.dto';
+import { HttpExceptionFilter } from 'src/filter/http-exception/http-exception.filter';
 
 @Controller('student')
 export class StudentController {
@@ -33,6 +35,7 @@ export class StudentController {
   }
 
   @Get(':id')
+  @UseFilters(HttpExceptionFilter)
   getStudentid(
     @Param(
       'id',
